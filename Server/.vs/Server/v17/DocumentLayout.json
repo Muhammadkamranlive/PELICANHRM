@@ -1,0 +1,80 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Freelance\\ERP\\Server\\Server\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D21E34CE-2D10-44E4-8ABB-F3AAB178F306}|..\\API\\API\\API.csproj|d:\\freelance\\erp\\server\\api\\api\\api\\documentmanagment\\trainingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8C6B9FE8-C9FE-4379-80C7-480F401AB17E}|..\\Services\\Server.Services\\Server.Services.csproj|d:\\freelance\\erp\\server\\services\\server.services\\common\\authentication\\authmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8C6B9FE8-C9FE-4379-80C7-480F401AB17E}|..\\Services\\Server.Services\\Server.Services.csproj|d:\\freelance\\erp\\server\\services\\server.services\\profile\\jobexperience\\jobexperience_service.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TrainingController.cs",
+              "DocumentMoniker": "D:\\Freelance\\ERP\\Server\\API\\API\\API\\DocumentManagment\\TrainingController.cs",
+              "RelativeDocumentMoniker": "..\\API\\API\\API\\DocumentManagment\\TrainingController.cs",
+              "ToolTip": "D:\\Freelance\\ERP\\Server\\API\\API\\API\\DocumentManagment\\TrainingController.cs",
+              "RelativeToolTip": "..\\API\\API\\API\\DocumentManagment\\TrainingController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-10T09:53:45.05Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthManager.cs",
+              "DocumentMoniker": "D:\\Freelance\\ERP\\Server\\Services\\Server.Services\\Common\\Authentication\\AuthManager.cs",
+              "RelativeDocumentMoniker": "..\\Services\\Server.Services\\Common\\Authentication\\AuthManager.cs",
+              "ToolTip": "D:\\Freelance\\ERP\\Server\\Services\\Server.Services\\Common\\Authentication\\AuthManager.cs",
+              "RelativeToolTip": "..\\Services\\Server.Services\\Common\\Authentication\\AuthManager.cs",
+              "ViewState": "AQIAAH8CAAAAAAAAAAD4v4QCAAAXAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-10T09:52:42.638Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "JobExperience_Service.cs",
+              "DocumentMoniker": "D:\\Freelance\\ERP\\Server\\Services\\Server.Services\\Profile\\JobExperience\\JobExperience_Service.cs",
+              "RelativeDocumentMoniker": "..\\Services\\Server.Services\\Profile\\JobExperience\\JobExperience_Service.cs",
+              "ToolTip": "D:\\Freelance\\ERP\\Server\\Services\\Server.Services\\Profile\\JobExperience\\JobExperience_Service.cs",
+              "RelativeToolTip": "..\\Services\\Server.Services\\Profile\\JobExperience\\JobExperience_Service.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-10T09:52:00.961Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
