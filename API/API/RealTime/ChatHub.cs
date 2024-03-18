@@ -11,19 +11,22 @@ namespace API.RealTime
         private readonly INotifications_Service _notifications_Service;
         private readonly ICaseComments_Service _caseComments_Service;
         private readonly ICaseManagment_Service caseManageService;
+        private readonly IChat_Service _chat_Service;
         private IAuthManager _authManager;
         public ChatHub
         (
             INotifications_Service notifications_Service,
             ICaseComments_Service caseComments_Service,
             ICaseManagment_Service service,
-            IAuthManager authManager
+            IAuthManager authManager,
+            IChat_Service chat_Service
         )
         {
             _notifications_Service = notifications_Service;
             _caseComments_Service = caseComments_Service;
             caseManageService = service;
             _authManager = authManager;
+            _chat_Service = chat_Service;
         }
 
         public async Task SendNotification(string userId,Guid caseId, string message)
@@ -43,7 +46,7 @@ namespace API.RealTime
             await _caseComments_Service.InsertAsync(newNotification);
             await _caseComments_Service.CompleteAync();
 
-            var allNotifications = new ChatModel
+            var allNotifications = new ChatModel1
             {
                 CreatedAt= newNotification.CreatedAt,
                 Text=newNotification.Text,
@@ -97,6 +100,35 @@ namespace API.RealTime
 
                 throw new Exception(e.Message + e.InnerException?.Message);
             }
+        }
+
+
+
+
+        public async Task SendMessage(string SenderId, string RecieverId, string message, string Role)
+        {
+            var item = new Chat()
+            {
+
+                Content    = message,
+                ReceiverId = RecieverId,
+                SenderId   = SenderId,
+                Timestamp  = DateTime.Now,
+                Role       = Role
+            };
+            await _chat_Service.InsertAsync(item);
+            await _chat_Service.CompleteAync();
+
+            var allNotifications = new Chat
+            {
+                ReceiverId = RecieverId,
+                Content    = message,
+                SenderId   = SenderId,
+                Timestamp  = DateTime.Now,
+                Role       = Role,
+                Id         = Guid.NewGuid(),
+            };
+            await Clients.All.SendAsync("ReceiveMessage", allNotifications);
         }
 
     }

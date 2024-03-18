@@ -8,6 +8,7 @@ using Server.Mapper;
 using Server.Services;
 using Server.Repository;
 using Server.Middlewares;
+using API.TenantMiddleware;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,12 +20,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDbContext<ERPDb>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("sqlConnection"), x => x.MigrationsAssembly(typeof(Program).Assembly.FullName)));
+
 builder.Services.AddIdentity<ApplicationUser, CustomRole>()
     .AddEntityFrameworkStores<ERPDb>()
     .AddDefaultTokenProviders()
     .AddClaimsPrincipalFactory<CustomUserClaimsPrincipalFactory>();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddSingleton<ITenantResolve, TenantResolve>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<TenantResolve>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<IPasswordReset_Repo, PasswordReset_Repo>();
@@ -72,6 +75,14 @@ builder.Services.AddScoped<IBlog_Repo, Blog_Repo>();
 builder.Services.AddScoped<IBlog_Service, Blog_Service>();
 builder.Services.AddScoped<ITraining_Repo, Training_Repo>();
 builder.Services.AddScoped<ITraining_Service, Training_Service>();
+builder.Services.AddScoped<ITenants_Repo, Tenants_Repo>();
+builder.Services.AddScoped<ITenants_Service, Tenants_Service>();
+builder.Services.AddScoped<ILog_Repo, Log_Repo>();
+builder.Services.AddScoped<ILog_Service , Logs_Service>();
+builder.Services.AddScoped<IDesignation_Repo, Designation_Repo>();
+builder.Services.AddScoped<IDesignation_Service, Designation_Service>();
+builder.Services.AddScoped<IChat_Repo, Chat_Repo>();
+builder.Services.AddScoped<IChat_Service, Chat_Service>();
 builder.Services.ConfigureIdentity();
 builder.Services.AddHttpClient();
 builder.Services.AddAutoMapper(typeof(ConfigureDTOS));
@@ -165,15 +176,15 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseCors("CorsPolicy");
-
 app.UseAuthentication();
+app.UseMiddleware<TenantResolutionMiddleware>();
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<ChatHub>("/chat");
 });
-app.MapControllers();
 
+app.MapControllers();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.Run();

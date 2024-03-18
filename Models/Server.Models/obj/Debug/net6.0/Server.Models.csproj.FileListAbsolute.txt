@@ -9,3 +9,4 @@ D:\Freelance\ERP\Server\Models\Server.Models\obj\Debug\net6.0\Server.Models.dll
 D:\Freelance\ERP\Server\Models\Server.Models\obj\Debug\net6.0\refint\Server.Models.dll
 D:\Freelance\ERP\Server\Models\Server.Models\obj\Debug\net6.0\Server.Models.pdb
 D:\Freelance\ERP\Server\Models\Server.Models\obj\Debug\net6.0\ref\Server.Models.dll
+D:\Freelance\ERP\Server\Models\Server.Models\obj\Debug\net6.0\Server.Models.sourcelink.json

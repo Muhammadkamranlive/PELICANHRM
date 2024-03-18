@@ -3,13 +3,13 @@
   "WorkspaceRootPath": "D:\\Freelance\\ERP\\Server\\Server\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D21E34CE-2D10-44E4-8ABB-F3AAB178F306}|..\\API\\API\\API.csproj|d:\\freelance\\erp\\server\\api\\api\\api\\documentmanagment\\trainingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D21E34CE-2D10-44E4-8ABB-F3AAB178F306}|..\\API\\API\\API.csproj|d:\\freelance\\erp\\server\\api\\api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8C6B9FE8-C9FE-4379-80C7-480F401AB17E}|..\\Services\\Server.Services\\Server.Services.csproj|d:\\freelance\\erp\\server\\services\\server.services\\common\\authentication\\authmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8C6B9FE8-C9FE-4379-80C7-480F401AB17E}|..\\Services\\Server.Services\\Server.Services.csproj|d:\\freelance\\erp\\server\\services\\server.services\\profile\\jobexperience\\jobexperience_service.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D21E34CE-2D10-44E4-8ABB-F3AAB178F306}|..\\API\\API\\API.csproj|d:\\freelance\\erp\\server\\api\\api\\api\\authentication\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -36,14 +36,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "TrainingController.cs",
-              "DocumentMoniker": "D:\\Freelance\\ERP\\Server\\API\\API\\API\\DocumentManagment\\TrainingController.cs",
-              "RelativeDocumentMoniker": "..\\API\\API\\API\\DocumentManagment\\TrainingController.cs",
-              "ToolTip": "D:\\Freelance\\ERP\\Server\\API\\API\\API\\DocumentManagment\\TrainingController.cs",
-              "RelativeToolTip": "..\\API\\API\\API\\DocumentManagment\\TrainingController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAfAAAA",
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Freelance\\ERP\\Server\\API\\API\\Program.cs",
+              "RelativeDocumentMoniker": "..\\API\\API\\Program.cs",
+              "ToolTip": "D:\\Freelance\\ERP\\Server\\API\\API\\Program.cs",
+              "RelativeToolTip": "..\\API\\API\\Program.cs",
+              "ViewState": "AQIAAHkAAAAAAAAAAAAwwAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-10T09:53:45.05Z",
+              "WhenOpened": "2024-03-18T02:53:19.485Z",
               "EditorCaption": ""
             },
             {
@@ -54,22 +54,22 @@
               "RelativeDocumentMoniker": "..\\Services\\Server.Services\\Common\\Authentication\\AuthManager.cs",
               "ToolTip": "D:\\Freelance\\ERP\\Server\\Services\\Server.Services\\Common\\Authentication\\AuthManager.cs",
               "RelativeToolTip": "..\\Services\\Server.Services\\Common\\Authentication\\AuthManager.cs",
-              "ViewState": "AQIAAH8CAAAAAAAAAAD4v4QCAAAXAAAA",
+              "ViewState": "AQIAABYEAAAAAAAAAAApwCQEAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-10T09:52:42.638Z",
+              "WhenOpened": "2024-03-17T20:17:05.482Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "JobExperience_Service.cs",
-              "DocumentMoniker": "D:\\Freelance\\ERP\\Server\\Services\\Server.Services\\Profile\\JobExperience\\JobExperience_Service.cs",
-              "RelativeDocumentMoniker": "..\\Services\\Server.Services\\Profile\\JobExperience\\JobExperience_Service.cs",
-              "ToolTip": "D:\\Freelance\\ERP\\Server\\Services\\Server.Services\\Profile\\JobExperience\\JobExperience_Service.cs",
-              "RelativeToolTip": "..\\Services\\Server.Services\\Profile\\JobExperience\\JobExperience_Service.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAAAAAA",
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\Freelance\\ERP\\Server\\API\\API\\API\\Authentication\\AuthController.cs",
+              "RelativeDocumentMoniker": "..\\API\\API\\API\\Authentication\\AuthController.cs",
+              "ToolTip": "D:\\Freelance\\ERP\\Server\\API\\API\\API\\Authentication\\AuthController.cs",
+              "RelativeToolTip": "..\\API\\API\\API\\Authentication\\AuthController.cs",
+              "ViewState": "AQIAAE8AAAAAAAAAAIAxwGoAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-10T09:52:00.961Z",
+              "WhenOpened": "2024-03-17T23:41:48.827Z",
               "EditorCaption": ""
             }
           ]

@@ -1,33 +1,39 @@
 ﻿using Server.Core;
 using Server.Repository;
+using Microsoft.AspNetCore.Http;
 
 namespace Server.UOW
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ERPDb _crmContext;
-        public UnitOfWork(ERPDb candidateCRM)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UnitOfWork(ERPDb candidateCRM, IHttpContextAccessor httpContextAccessor)
         {
                 _crmContext             = candidateCRM;
-               PasswordReset_Repo       = new PasswordReset_Repo(_crmContext);
-               Candidate_Repo           = new Candidate_Repo(_crmContext);
-               EmergencyContacts_Repo   = new EmergencyContacts_Repo(_crmContext);
-               CaseCommetns_Repo        = new CaseCommetns_Repo(_crmContext);
-               Case_Repo                = new Case_Repo(_crmContext);
-               AssetManager_Repo        = new AssetManager_Repo(_crmContext);
-               Attachments_Repo         = new Attachments_Repo(_crmContext);
-               HRNotes_Repo             = new HRNotes_Repo(_crmContext);
-               Notifications_Repo       = new Notifications_Repo(_crmContext);
-               Candidate_Repo           = new Candidate_Repo(_crmContext);
-               Education_Repo           = new Education_Repo(_crmContext);
-               JobExperience_Repo       = new JobExperience_Repo(_crmContext);
-               ProfessionalLicense_Repo = new ProfessionalLicense_Repo(_crmContext);
-               Personal_Repo            = new Personal_Repo(_crmContext);
-               zoomMeeting_Repo         = new ZoomMeting_Repo(_crmContext);
-               page_Repo                = new Page_Repo(_crmContext);
-               blog_Repo                = new Blog_Repo(_crmContext);
-               ContactPage_             = new ContactPage_Repo(_crmContext);
-
+               _httpContextAccessor     = httpContextAccessor;
+               PasswordReset_Repo       = new PasswordReset_Repo(_crmContext, _httpContextAccessor);
+               Candidate_Repo           = new Candidate_Repo(_crmContext, _httpContextAccessor);
+               EmergencyContacts_Repo   = new EmergencyContacts_Repo(_crmContext, _httpContextAccessor);
+               CaseCommetns_Repo        = new CaseCommetns_Repo(_crmContext, _httpContextAccessor);
+               Case_Repo                = new Case_Repo(_crmContext, httpContextAccessor);
+               AssetManager_Repo        = new AssetManager_Repo(_crmContext, httpContextAccessor);
+               Attachments_Repo         = new Attachments_Repo(_crmContext, httpContextAccessor);
+               HRNotes_Repo             = new HRNotes_Repo(_crmContext, httpContextAccessor);
+               Notifications_Repo       = new Notifications_Repo(_crmContext, httpContextAccessor);
+               Candidate_Repo           = new Candidate_Repo(_crmContext, httpContextAccessor);
+               Education_Repo           = new Education_Repo(_crmContext, httpContextAccessor);
+               JobExperience_Repo       = new JobExperience_Repo(_crmContext, httpContextAccessor);
+               ProfessionalLicense_Repo = new ProfessionalLicense_Repo(_crmContext, httpContextAccessor);
+               Personal_Repo            = new Personal_Repo(_crmContext, httpContextAccessor);
+               zoomMeeting_Repo         = new ZoomMeting_Repo(_crmContext, httpContextAccessor);
+               page_Repo                = new Page_Repo(_crmContext, httpContextAccessor);
+               blog_Repo                = new Blog_Repo(_crmContext, httpContextAccessor);
+               ContactPage_             = new ContactPage_Repo(_crmContext, httpContextAccessor);
+               tenants_Repo             = new Tenants_Repo(_crmContext, httpContextAccessor);
+               Designation_Repo         = new Designation_Repo(_crmContext, httpContextAccessor);
+               chat_Repo                = new Chat_Repo(_crmContext, httpContextAccessor);
+               
 
         }
         public IPasswordReset_Repo PasswordReset_Repo             { get; private set; }
@@ -47,8 +53,11 @@ namespace Server.UOW
         public IZoomMeting_Repo zoomMeeting_Repo                  { get; private set; }
         public IPage_Repo page_Repo                               { get; private set; }
         public IBlog_Repo blog_Repo                               { get; private set; }
-
         public IContactPage_Repo ContactPage_                     { get; private set; }
+        public ITenants_Repo tenants_Repo                         { get; private set; }
+        public IDesignation_Repo Designation_Repo                 { get; private set; }
+
+        public IChat_Repo chat_Repo                               { get; private set; }
 
         public async void Dispose()
         {

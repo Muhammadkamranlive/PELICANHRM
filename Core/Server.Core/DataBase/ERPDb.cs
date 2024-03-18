@@ -6,17 +6,13 @@ namespace Server.Core
 {
     public class ERPDb : IdentityDbContext<ApplicationUser, CustomRole, string>
     {
-
-        private readonly ITenantResolve _tenantResolve;
         public ERPDb
         (
-            DbContextOptions<ERPDb> dbContextOptions,
-            ITenantResolve tenantResolve
-
+            DbContextOptions<ERPDb> dbContextOptions
         ) : base(dbContextOptions)
         {
 
-            _tenantResolve = tenantResolve;
+           
 
 
         }
@@ -41,36 +37,10 @@ namespace Server.Core
         public virtual DbSet<BlogPage> BlogPages { get; set; }
         public virtual DbSet<Trainings> Trainings { get; set; }
         public virtual DbSet<ContactPage> ContactPages { get; set; }
-
-        public override int SaveChanges()
-        {
-            SetTenantId();
-            return base.SaveChanges();
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            SetTenantId();
-            return base.SaveChangesAsync(cancellationToken);
-        }
-
-        private void SetTenantId()
-        {
-            int TenantId = _tenantResolve.GetTenantId();
-            foreach (var entry in ChangeTracker.Entries())
-            {
-                if (entry.Entity.GetType().GetProperty("TenantId") != null)
-                {
-                    entry.Property("TenantId").CurrentValue = TenantId;
-                }
-            }
-        }
-
-        private int SetTenant()
-        {
-            return _tenantResolve.GetTenantId();
-
-        }
+        public virtual DbSet<PelicanHRMTenant> PelicanHRMTenants { get; set; }
+        public virtual DbSet<AdminLogs> Logs            { get; set; }
+        public virtual DbSet<Designations> Designations { get; set; }
+        public virtual DbSet<Chat> Chats     { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -78,7 +48,7 @@ namespace Server.Core
             modelBuilder.Entity<BlogPage>()
                .Property(w => w.Id)
                .ValueGeneratedOnAdd();
-            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<ContactPage>()
                .Property(w => w.Id)
                .ValueGeneratedOnAdd();
@@ -90,11 +60,10 @@ namespace Server.Core
                .Property(w => w.Id)
                .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<WebPages>()
-                 .HasQueryFilter(x => x.TenantId == SetTenant());
-            modelBuilder.Entity<ContactPage>()
-                 .HasQueryFilter(x => x.TenantId == SetTenant());
-
+            modelBuilder.Entity<PelicanHRMTenant>()
+               .Property(w => w.CompanyId)
+               .ValueGeneratedOnAdd();
+           
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
 

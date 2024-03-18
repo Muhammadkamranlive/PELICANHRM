@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Server.Core
 {
-    public class TenantResolve : ITenantResolve
+    public sealed class TenantResolve 
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         public TenantResolve(IHttpContextAccessor httpContextAccessor)
@@ -16,15 +16,29 @@ namespace Server.Core
             _httpContextAccessor = httpContextAccessor;
         }
 
+
+        public string GetUserIdFromToken()
+        {
+            var userIdentity = _httpContextAccessor?.HttpContext?.User.Identity as ClaimsIdentity;
+            var tenantClaim  = userIdentity?.Claims.FirstOrDefault(c => c.Type == "uid");
+            if (tenantClaim != null && tenantClaim.Value!=null)
+            {
+                return tenantClaim.Value;
+            }
+            return "uid";
+        }
+
         public int GetTenantId()
         {
-            var userIdentity = _httpContextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-            var tenantClaim  = userIdentity?.Claims.FirstOrDefault(c => c.Type == "TenantId");
-            if (tenantClaim != null && int.TryParse(tenantClaim.Value, out int tenantId))
+            if (_httpContextAccessor?.HttpContext?.User?.Identity is ClaimsIdentity userIdentity)
             {
-                return tenantId;
+                var tenantClaim = userIdentity.Claims.FirstOrDefault(c => c.Type == "TenantId");
+                if (tenantClaim != null && int.TryParse(tenantClaim.Value, out int tenantId))
+                {
+                    return tenantId;
+                }
             }
-            throw new InvalidOperationException("Tenant ID not found in the JWT token.");
+            return 1;
         }
     }
 }

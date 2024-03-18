@@ -14,7 +14,6 @@ namespace Server.Domain
         public bool IsPrimary       { get; set; } 
         public string Notes         { get; set; } 
         public string userId        { get; set; }
-        public ApplicationUser User { get; set; }
         public int TenantId         { get; set; } = 1;
     }
 

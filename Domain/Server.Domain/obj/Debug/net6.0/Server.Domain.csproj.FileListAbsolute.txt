@@ -10,3 +10,4 @@ D:\Freelance\ERP\Server\Domain\Server.Domain\obj\Debug\net6.0\Server.Domain.dll
 D:\Freelance\ERP\Server\Domain\Server.Domain\obj\Debug\net6.0\refint\Server.Domain.dll
 D:\Freelance\ERP\Server\Domain\Server.Domain\obj\Debug\net6.0\Server.Domain.pdb
 D:\Freelance\ERP\Server\Domain\Server.Domain\obj\Debug\net6.0\ref\Server.Domain.dll
+D:\Freelance\ERP\Server\Domain\Server.Domain\obj\Debug\net6.0\Server.Domain.sourcelink.json

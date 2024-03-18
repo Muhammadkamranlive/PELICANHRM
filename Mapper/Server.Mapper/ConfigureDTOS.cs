@@ -9,6 +9,7 @@ namespace Server.Mapper
         public ConfigureDTOS()
         {
             CreateMap<Personal, PersonalModel>().ReverseMap();
+            CreateMap<PelicanHRMTenant, PelicanHRMTenantModel>().ReverseMap();
             CreateMap<CandidateInfo, CandidateModel>().ReverseMap();
             CreateMap<Education, EducationModel>().ReverseMap();
             CreateMap<JobExperience, JobExperienceModel>().ReverseMap();
@@ -35,8 +36,9 @@ namespace Server.Mapper
                                                            
           .ReverseMap(); 
 
-
             CreateMap<TrainingModel, Trainings>();
+            CreateMap<Designations, DesginationModel>().ReverseMap();
+            CreateMap<Chat, ChatModel>().ReverseMap();
 
         }
     }

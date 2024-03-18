@@ -9,5 +9,6 @@ namespace Server.Core
     public interface ITenantResolve
     {
         int GetTenantId();
+        string GetUserIdFromToken();
     }
 }

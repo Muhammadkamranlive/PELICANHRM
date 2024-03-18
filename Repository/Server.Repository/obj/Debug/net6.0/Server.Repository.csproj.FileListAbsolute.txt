@@ -15,3 +15,4 @@ D:\Freelance\ERP\Server\Repository\Server.Repository\obj\Debug\net6.0\Server.Rep
 D:\Freelance\ERP\Server\Repository\Server.Repository\obj\Debug\net6.0\refint\Server.Repository.dll
 D:\Freelance\ERP\Server\Repository\Server.Repository\obj\Debug\net6.0\Server.Repository.pdb
 D:\Freelance\ERP\Server\Repository\Server.Repository\obj\Debug\net6.0\ref\Server.Repository.dll
+D:\Freelance\ERP\Server\Repository\Server.Repository\obj\Debug\net6.0\Server.Repository.sourcelink.json

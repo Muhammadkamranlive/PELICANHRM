@@ -8,6 +8,6 @@
         public bool IsRead           { get; set; }
         public string UserId         { get; set; } 
         public string WorkflowStep   { get; set; }
-        public int TenantId          { get; set; } = 1;
+        public int TenantId          { get; set; }=1; 
     }
 }

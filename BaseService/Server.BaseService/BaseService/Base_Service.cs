@@ -1,6 +1,9 @@
 ﻿using Server.UOW;
 using Server.Core;
+using Server.Domain;
+using Newtonsoft.Json;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Server.BaseService
 {
@@ -43,21 +46,13 @@ namespace Server.BaseService
         public async Task<T?> Get(Guid id)
         {
             var tempRecord = await _genericRepository.Get(id);
-            if (tempRecord == null)
-            {
-                throw new Exception($"{typeof(T).Name} with the {id} is  not Found sorry...!");
-            }
             return tempRecord;
         }
 
         public async Task<IEnumerable<T>> GetAll()
         {
-            var AllData = await _genericRepository.GetAll();
-            if (AllData != null)
-            {
-                return AllData;
-            }
-            throw new Exception($"{typeof(T).Name} is not having any record Sorry...!");
+            return await _genericRepository.GetAll();
+            
         }
 
         public async Task InsertAsync(T entity)
@@ -69,6 +64,8 @@ namespace Server.BaseService
         {
             _genericRepository.Update(entity);
         }
+
+        
     }
 
 }

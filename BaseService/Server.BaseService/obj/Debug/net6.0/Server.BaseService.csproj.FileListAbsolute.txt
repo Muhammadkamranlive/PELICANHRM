@@ -19,3 +19,4 @@ D:\Freelance\ERP\Server\BaseService\Server.BaseService\obj\Debug\net6.0\Server.B
 D:\Freelance\ERP\Server\BaseService\Server.BaseService\obj\Debug\net6.0\refint\Server.BaseService.dll
 D:\Freelance\ERP\Server\BaseService\Server.BaseService\obj\Debug\net6.0\Server.BaseService.pdb
 D:\Freelance\ERP\Server\BaseService\Server.BaseService\obj\Debug\net6.0\ref\Server.BaseService.dll
+D:\Freelance\ERP\Server\BaseService\Server.BaseService\obj\Debug\net6.0\Server.BaseService.sourcelink.json

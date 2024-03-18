@@ -21,7 +21,10 @@ namespace Server.UOW
         public IZoomMeting_Repo          zoomMeeting_Repo         { get;}
         public IPage_Repo                page_Repo                { get;}
         public IBlog_Repo                blog_Repo                { get;}
-        public IContactPage_Repo         ContactPage_ { get; }
+        public IContactPage_Repo         ContactPage_             { get;}
+        public ITenants_Repo             tenants_Repo             { get;}
+        public IDesignation_Repo         Designation_Repo         { get;}
+        public IChat_Repo                chat_Repo                { get; }
         Task<int> Save();
     }
 }

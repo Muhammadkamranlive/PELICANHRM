@@ -6,7 +6,6 @@ namespace Server.Domain
     {
         public Guid Id { get; set; }
         public string userId { get; set; }
-        public ApplicationUser User { get; set; }
         public string ItemName { get; set; }
         public string Category { get; set; }
         public string Manufacturer { get; set; }

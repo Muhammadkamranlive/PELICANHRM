@@ -1,5 +1,6 @@
 ﻿using Server.Models;
 using System.Collections;
+using Server.Models.Authentication;
 using Microsoft.AspNetCore.Identity;
 
 namespace Server.Services
@@ -24,13 +25,13 @@ namespace Server.Services
         Task<IEnumerable<IdentityError>> DeleteRole(string id);
         Task<IEnumerable<IdentityError>> DeleteUser(string id);
         Task<IEnumerable> GetAllRoles();
-        Task<IEnumerable> GetAllUsers();
         Task<IEnumerable> GetAllUsersWithRoles();
-        Task<IEnumerable> GetusersAll();
         Task<IEnumerable> GetAll();
         Task<AllUsersModel> GetByIduser(string uid);
         Task<string> UpdateRole();
         Task<IEnumerable<IdentityError>> UpdateRoleAndPermissions(string Id, string roleName, string permissions);
+        Task<string> RegisterTenant(TenantRegisterModel model);
+
 
     }
 }

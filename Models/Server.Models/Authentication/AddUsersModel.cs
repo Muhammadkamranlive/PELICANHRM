@@ -12,5 +12,6 @@ namespace Server.Models
         public string Password           { get; set; }
         public bool isAdmin              { get; set; } = false;
         public bool isEmployee           { get; set; } = false;
+        public string Designation        { get; set; }
     }
 }

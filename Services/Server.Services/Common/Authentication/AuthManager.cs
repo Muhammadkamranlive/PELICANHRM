@@ -6,6 +6,8 @@ using Server.Models;
 using System.Text.Json;
 using System.Collections;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Server.Models.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -26,12 +28,14 @@ namespace Server.Services
         private readonly IPasswordReset_Service       _passwordResetService;
         private readonly IGeneralTask_Service         _generalTask_Service;
         private readonly INotifications_Service       _notifications_Service;
+        private readonly ITenants_Service             _tenants_Service;
         private readonly ERPDb _context;
+        private readonly IHttpContextAccessor        _httpContextAccessor;
         #endregion
 
         #region Constructor
         public AuthManager
-            (
+        (
             ERPDb context,
             IMapper mapper,
             UserManager<ApplicationUser> userManager,
@@ -40,10 +44,12 @@ namespace Server.Services
             IEmail_Service emailService,
             IPasswordReset_Service passwordResetService,
             IGeneralTask_Service generalTask_Service,
-            INotifications_Service notifications_Service
+            INotifications_Service notifications_Service,
+            ITenants_Service    tenants_Service,
+            IHttpContextAccessor  httpContextAccessor
 
 
-            )
+        )
         {
             _context               = context;
             _mapper                = mapper;
@@ -54,6 +60,8 @@ namespace Server.Services
             _passwordResetService  = passwordResetService;
             _generalTask_Service   = generalTask_Service;
             _notifications_Service = notifications_Service;
+            _tenants_Service       = tenants_Service;
+            _httpContextAccessor   = httpContextAccessor;
 
         }
 
@@ -61,38 +69,55 @@ namespace Server.Services
 
         public async Task<AuthResponseModel> Login(UserLoginModel loginDto)
         {
-            var user            = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null)
+            try
             {
-                return new AuthResponseModel { Message = "User not found." };
-            }
-            bool isValidUser = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-            if (!isValidUser)
-            {
-                return new AuthResponseModel { Message = "Invalid credentials." };
-            }
-            var token = await GenerateToken(user,1);
-            return new AuthResponseModel
-            {
-                Token       = token,
-                UserId      = user.Id,
-                EmailStatus = user.EmailConfirmed,
-                Message     = "Success",
+                var user = await _userManager.FindByEmailAsync(loginDto.Email);
+                if (user == null)
+                {
+                    return new AuthResponseModel { Message = "User not found." };
+                }
+                bool isValidUser = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+                if (!isValidUser)
+                {
+                    return new AuthResponseModel { Message = "Invalid credentials." };
+                }
+                var Tenants = await _tenants_Service.Find(x => x.CompanyName.ToLower() == user.CompanyName.ToLower());
+                int TenantId = 1;
+                if (Tenants.Count != 0)
+                {
+                    TenantId = Tenants.Select(x => x.CompanyId).FirstOrDefault();
+                }
+                var token = await GenerateToken(user, TenantId);
+                return new AuthResponseModel
+                {
+                    Token = token,
+                    UserId = user.Id,
+                    EmailStatus = user.EmailConfirmed,
+                    Message = "Success",
 
 
-            };
+                };
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
         }
         public async Task<IEnumerable<IdentityError>> RegisterAdmin(RegisterUserModel adminDto)
         {
             try
             {
-                var admin        = new ApplicationUser();
-                admin.FirstName  = adminDto.FirstName;
-                admin.LastName   = adminDto.LastName;
-                admin.MiddleName = adminDto.MiddleName;
-                admin.Email      = adminDto.Email; ;
-                admin.UserName   = adminDto.Email;
-                admin.EmployeeId = await GetMaxId()+1;
+                var admin                = new ApplicationUser();
+                admin.FirstName          = adminDto.FirstName;
+                admin.LastName           = adminDto.LastName;
+                admin.MiddleName         = adminDto.MiddleName;
+                admin.Email              = adminDto.Email; ;
+                admin.UserName           = adminDto.Email;
+                admin.EmployeeId         = await getEmployeeId() + 1;
+                admin.TenantId           = 4;
+                admin.CompanyDesignation = "Administrator";
+                admin.CompanyName        = "PelicanHRM";
                 var result = await _userManager.CreateAsync(admin, adminDto.Password);
                 if (result.Succeeded)
                 {
@@ -125,9 +150,9 @@ namespace Server.Services
                 admin.MiddleName = adminDto.MiddleName;
                 admin.Email      = adminDto.Email; ;
                 admin.UserName   = adminDto.Email;
-                admin.EmployeeId = await GetMaxId() + 1;
+                admin.EmployeeId = await getEmployeeId() + 1;
                 admin.image      = "https://firebasestorage.googleapis.com/v0/b/images-107c9.appspot.com/o/deafut.jpg?alt=media&token=b9fac53e-2606-44b3-89c2-e4bc03479051";
-                var result = await _userManager.CreateAsync(admin, adminDto.Password);
+                var result       = await _userManager.CreateAsync(admin, adminDto.Password);
                 if (result.Succeeded)
                 {
                     var roleExists = await _roleManager.RoleExistsAsync(adminDto.Role);
@@ -258,18 +283,24 @@ namespace Server.Services
         {
             try
             {
-                var admin             = new ApplicationUser();
-                admin.FirstName       = adminDto.FirstName;
-                admin.LastName        = adminDto.LastName;
-                admin.MiddleName      = adminDto.MiddleName;
-                admin.Email           = adminDto.Email; ;
-                admin.UserName        = adminDto.Email;
-                admin.defaultPassword = adminDto.Password;
-                admin.EmployeeId      = await GetMaxId() + 1;
-                admin.isAdmin         = adminDto.isAdmin;
-                admin.isEmployee      = adminDto.isEmployee;
-                admin.image           = "https://firebasestorage.googleapis.com/v0/b/images-107c9.appspot.com/o/deafut.jpg?alt=media&token=b9fac53e-2606-44b3-89c2-e4bc03479051";
-                var result            = await _userManager.CreateAsync(admin, adminDto.Password);
+                var tenantId             = Convert.ToInt32(_httpContextAccessor.HttpContext?.Items["CurrentTenant"]);
+                var UserId               = _httpContextAccessor.HttpContext?.Items["CurrentUserId"]?.ToString();
+                ApplicationUser userf    = await _userManager.FindByIdAsync(UserId);
+                var admin                = new ApplicationUser();
+                admin.FirstName          = adminDto.FirstName;
+                admin.LastName           = adminDto.LastName;
+                admin.MiddleName         = adminDto.MiddleName;
+                admin.Email              = adminDto.Email; ;
+                admin.UserName           = adminDto.Email;
+                admin.defaultPassword    = adminDto.Password;
+                admin.isAdmin            = adminDto.isAdmin;
+                admin.isEmployee         = adminDto.isEmployee;
+                admin.EmployeeId         = await getEmployeeId() + 1;
+                admin.TenantId           = tenantId;
+                admin.CompanyName        = userf.CompanyName;
+                admin.CompanyDesignation = adminDto.Designation;
+                admin.image              = "https://firebasestorage.googleapis.com/v0/b/images-107c9.appspot.com/o/deafut.jpg?alt=media&token=b9fac53e-2606-44b3-89c2-e4bc03479051";
+                var result               = await _userManager.CreateAsync(admin, adminDto.Password);
                 if (result.Succeeded)
                 {
                     var roleExists = await _roleManager.RoleExistsAsync(adminDto.role);
@@ -285,12 +316,12 @@ namespace Server.Services
                         await _userManager.AddClaimAsync(admin, new Claim("Permission", permission));
                     }
 
-                    var user = await _userManager.FindByNameAsync(admin.Email);
+                    var user = await _userManager.FindByEmailAsync(admin.Email);
 
                     if (user != null)
                     {
 
-                        if (adminDto.role == "Candidate")
+                        if (adminDto.role == "Employee")
                         {
                             var tasks = new List<GENERALTASK>
                             {
@@ -405,7 +436,7 @@ namespace Server.Services
                 admin.LastName  = adminDto.LastName;
                 admin.Email     = adminDto.Email; ;
                 admin.UserName  = adminDto.Email;
-               
+                admin.EmployeeId = await getEmployeeId() + 1;
                 var result      = await _userManager.CreateAsync(admin, adminDto.Password);
                 if (result.Succeeded)
                 {
@@ -823,54 +854,61 @@ namespace Server.Services
             }
         }
 
-        public async Task<IEnumerable> GetAllUsers()
-        {
-            try
-            {
-                var users = _userManager.Users.ToList();
-                var Students = users.Where(u => _userManager.IsInRoleAsync(u, "Candidate").Result).ToList();
-                return Students.Select(x=>new
-                {
-                    x.Id,
-                    x.FirstName,x.MiddleName, x.LastName,
-                    x.Email,
-                    x.image,
-
-                });
-
-            }
-            catch (Exception ex)
-            {
-
-                return ex.Message + ex.InnerException?.Message;
-            }
-        }
-
-
         public async Task<IEnumerable> GetAllUsersWithRoles()
         {
             try
             {
-                var users       = await _userManager.Users.ToListAsync();
-                var Students    = users.Where(u => !_userManager.IsInRoleAsync(u, "Candidate").Result).ToList();
-                var userResults = Students.Select(  user =>
+                var tenantId    = Convert.ToInt32(_httpContextAccessor.HttpContext?.Items["CurrentTenant"]);
+                if (tenantId!=4)
                 {
-                    var roles =   _userManager.GetRolesAsync(user);
-
-                    return new
+                    var users       = await _userManager.Users.Where(x => x.TenantId == tenantId).ToListAsync();
+                    var userResults = users.Select(user =>
                     {
-                        user.Id,
-                        user.FirstName,
-                        user.MiddleName,
-                        user.LastName,
-                        user.Email,
-                        Roles = roles.Result.FirstOrDefault(),
-                        user.image,
-                        user.defaultPassword
-                    };
-                }).ToList();
+                        var roles = _userManager.GetRolesAsync(user);
 
-                return userResults.ToList();
+                        return new
+                        {
+                            user.Id,
+                            user.FirstName,
+                            user.MiddleName,
+                            user.LastName,
+                            user.Email,
+                            Roles = roles.Result.FirstOrDefault(),
+                            user.image,
+                            user.defaultPassword,
+                            user.CompanyName,
+                            user.EmployeeId,
+                            user.CompanyDesignation
+                        };
+                    }).ToList();
+
+                    return userResults.ToList();
+                }
+                else
+                {
+                    var users = await _userManager.Users.ToListAsync();
+                    var userResults = users.Select(user =>
+                    {
+                        var roles = _userManager.GetRolesAsync(user);
+
+                        return new
+                        {
+                            user.Id,
+                            user.FirstName,
+                            user.MiddleName,
+                            user.LastName,
+                            user.Email,
+                            Roles = roles.Result.FirstOrDefault(),
+                            user.image,
+                            user.defaultPassword,
+                            user.CompanyName,
+                            user.EmployeeId,
+                            user.CompanyDesignation
+                        };
+                    }).ToList();
+
+                    return userResults.ToList();
+                }
                
             }
             catch (Exception ex)
@@ -880,60 +918,27 @@ namespace Server.Services
         }
 
 
-        public async Task<IEnumerable> GetusersAll()
-        {
-            try
-            {
-                var users = await _userManager.Users.ToListAsync();
-                var userResults = users.Select(user =>
-                {
-                    var roles = _userManager.GetRolesAsync(user);
-
-                    return new
-                    {
-                        user.Id,
-                        user.FirstName,
-                        user.MiddleName,
-                        user.LastName,
-                        user.Email,
-                        Roles = roles.Result.FirstOrDefault(),
-                        user.image,
-                       
-                    };
-                }).ToList();
-
-                return userResults.ToList();
-
-            }
-            catch (Exception ex)
-            {
-                return ex.Message + ex.InnerException?.Message;
-            }
-        }
-
-
+        //Get All Users in the 
         public async Task<IEnumerable> GetAll()
         {
             try
             {
-                var users = await _userManager.Users.ToListAsync();
-
+                var users       = await _userManager.Users.ToListAsync();
                 var userResults = users.Select(user =>
                 {
                     var roles = _userManager.GetRolesAsync(user);
                     return new AllUsersModel
                     {
-                      Id=  user.Id,
-                      FirstName=  user.FirstName,
-                      MiddleName=  user.MiddleName,
-                      LastName=  user.LastName,
-                      Email=  user.Email,
-                      Roles = roles.Result.FirstOrDefault(),
-                      Image= user.image,
+                      Id         =  user.Id,
+                      FirstName  =  user.FirstName,
+                      MiddleName =  user.MiddleName,
+                      LastName   =  user.LastName,
+                      Email      =  user.Email,
+                      Roles      =  roles.Result.FirstOrDefault(),
+                      Image      =  user.image,
 
                     };
                 }).ToList();
-
                 return userResults.ToList();
 
             }
@@ -941,13 +946,6 @@ namespace Server.Services
             {
                 return ex.Message + ex.InnerException?.Message;
             }
-        }
-
-        private  async Task<int> GetMaxId()
-        {
-            
-                var users  = await _userManager.Users.ToListAsync();
-                return users.Max(x=>x.EmployeeId);
         }
 
         public async Task<AllUsersModel> GetByIduser(string uid)
@@ -955,17 +953,17 @@ namespace Server.Services
             try
             {
                 var user    = await _userManager.FindByIdAsync(uid);
-                var roles = _userManager.GetRolesAsync(user);
+                var roles   = _userManager.GetRolesAsync(user);
 
                 var myuser = new AllUsersModel
                 {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
+                    Id         = user.Id,
+                    FirstName  = user.FirstName,
                     MiddleName = user.MiddleName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    Roles = roles.Result.FirstOrDefault(),
-                    Image = user.image,
+                    LastName   = user.LastName,
+                    Email      = user.Email,
+                    Roles      = roles.Result.FirstOrDefault(),
+                    Image      = user.image,
                 };
 
 
@@ -992,15 +990,16 @@ namespace Server.Services
                 }
 
                 // Update user details
-                user1.FirstName = user.FirstName;
-                user1.LastName = user.LastName;
+                user1.FirstName  = user.FirstName;
+                user1.LastName   = user.LastName;
                 user1.MiddleName = user.MiddleName;
-                user1.Email = user.Email;
+                user1.Email      = user.Email;
                 user1.isEmployee = user.isEmployee;
-                user1.isAdmin = user1.isAdmin;
+                user1.isAdmin    = user1.isAdmin;
+                user1.CompanyDesignation=user.Designation;
                 // Update user role
                 var existingRoles = await _userManager.GetRolesAsync(user1);
-                var roleToRemove = existingRoles.FirstOrDefault();
+                var roleToRemove  = existingRoles.FirstOrDefault();
                 if (roleToRemove != null)
                 {
                     var removeRoleResult = await _userManager.RemoveFromRoleAsync(user1, roleToRemove);
@@ -1056,6 +1055,90 @@ namespace Server.Services
 
                 throw new Exception(ex.Message);
             }
+        }
+
+        public async Task<string> RegisterTenant(TenantRegisterModel model)
+        {
+            try
+            {
+                IList<PelicanHRMTenant> list = await _tenants_Service.Find(x => x.CompanyName.ToLower() == model.CompanyName.ToLower());
+                if (list.Count == 0)
+                {
+                     var admin         = new ApplicationUser();
+                     admin.FirstName   = model.FirstName;
+                     admin.LastName    = model.LastName;
+                     admin.MiddleName  = model.MiddleName;
+                     admin.Email       = model.Email;
+                     admin.UserName    = model.Email;
+                     admin.CompanyName = model.CompanyName;
+                     admin.EmployeeId   =  await getEmployeeId() + 1; ;
+                     admin.CompanyDesignation = "Onwer";
+                     admin.image       = "https://firebasestorage.googleapis.com/v0/b/images-107c9.appspot.com/o/deafut.jpg?alt=media&token=b9fac53e-2606-44b3-89c2-e4bc03479051";
+                     var result        = await _userManager.CreateAsync(admin, model.Password);
+                     if (result.Succeeded)
+                     {
+                         var roleExists = await _roleManager.RoleExistsAsync("SuperUser");
+                         if (!roleExists)
+                         {
+                             await _roleManager.CreateAsync(new CustomRole { Name = "SuperUser", Permissions = "Read,Write,Delete,Update" });
+                         }
+                     
+                        await _userManager.AddToRoleAsync(admin, "SuperUser");
+                        var user = await _userManager.FindByEmailAsync(admin.Email);
+                        if (user != null)
+                        {
+                            
+                            var company      = new PelicanHRMTenant()
+                            {
+                                CompanyName  = model.CompanyName
+                            };
+                            
+                            await _tenants_Service.InsertAsync(company);
+                            await _tenants_Service.CompleteAync();
+
+                            var notification          = new NOTIFICATIONS();
+                            notification.IsRead       = false;
+                            notification.Message      = "Your Account Created Successfully";
+                            notification.UserId       = user.Id;
+                            notification.WorkflowStep = "Registration";
+                            notification.Timestamp    = DateTime.Now;
+                            await _notifications_Service.InsertAsync(notification);
+                            await _notifications_Service.CompleteAync();
+
+                            IList<PelicanHRMTenant> list1 = await _tenants_Service.Find(x => x.CompanyName.ToLower() == model.CompanyName.ToLower());
+
+                            if (list1.Count != 0)
+                            {
+                                PelicanHRMTenant tenant = list1.FirstOrDefault();
+                                user.CompanyName        = tenant.CompanyName;
+                                user.TenantId           = tenant.CompanyId;
+
+                                await _userManager.UpdateAsync(user);
+                            }
+                        }
+
+                        return "OK";
+                    }
+                    var err= result.Errors.Select(x => x.Description).FirstOrDefault();
+                    return err; 
+                }
+                else
+                {
+                    return "Company Detail Already Exists";
+                }
+                
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
+        }
+        private async Task<int> getEmployeeId()
+        {
+            int maxEmployeeId = await _userManager.Users.Select(x => (int?)x.EmployeeId).MaxAsync() ?? 0;
+            return maxEmployeeId;
         }
 
         #endregion

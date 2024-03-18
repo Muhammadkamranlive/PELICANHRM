@@ -4,11 +4,12 @@ using Server.Models;
 using Server.Domain;
 using Server.Services;
 using Microsoft.AspNetCore.Mvc;
+using Server.Models.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace API.API.Authentication
+namespace API.Authentication
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -20,22 +21,25 @@ namespace API.API.Authentication
         private readonly IHttpClientFactory      _httpClientFactory;
         private readonly IPasswordReset_Service  _passwordService;
         private readonly IEmail_Service          _emailService;
+        private readonly ITenants_Service        _tenants_Service;
         public AuthController
         (
           IHttpClientFactory httpClientFactory,
           IMapper mapper, ILogger<AuthController> logger,
           IAuthManager authManager,
           IPasswordReset_Service passwordReset_Service,
-          IEmail_Service emailService
+          IEmail_Service emailService,
+          ITenants_Service tenants_Service
         )
         {
 
-            this.mapper = mapper;
-            this.logger = logger;
-            this.authManager = authManager;
+            this.mapper        = mapper;
+            this.logger        = logger;
+            this.authManager   = authManager;
             _httpClientFactory = httpClientFactory;
-            _passwordService = passwordReset_Service;
-            _emailService = emailService;
+            _passwordService   = passwordReset_Service;
+            _emailService      = emailService;
+            _tenants_Service   = tenants_Service;
 
         }
 
@@ -47,6 +51,16 @@ namespace API.API.Authentication
         {
             var authResponse = await authManager.UpdateUser(loginDto);
 
+            return Ok(authResponse);
+        }
+
+        [HttpGet]
+        [Route("GetTenants")]
+        //[CustomAuthorize("Read")]
+       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator,Developer")]
+        public async Task<ActionResult> GetTenants()
+        {
+            var authResponse = await _tenants_Service.GetAll();
             return Ok(authResponse);
         }
 
@@ -68,6 +82,28 @@ namespace API.API.Authentication
                 Message = "User Registered Successfully"
             };
             return Ok(successResponse);
+        }
+
+
+        [HttpPost]
+        [Route("RegisterTenant")]
+        public async Task<ActionResult> RegisterTenant([FromBody] TenantRegisterModel model)
+        {
+            
+            var message   = await authManager.RegisterTenant( model);
+            if (message.StartsWith("OK"))
+            {
+                var successResponse = new SuccessResponse
+                {
+                    Message = "Your Company has been Registered Successfully"
+                };
+                return Ok(successResponse);
+            }
+            var successResponse1 = new SuccessResponse
+            {
+                Message = message
+            };
+            return BadRequest(successResponse1);
         }
 
         [HttpGet]
@@ -490,40 +526,19 @@ namespace API.API.Authentication
             return Content(message, "application/json");
         }
 
-        [HttpGet]
-        [Route("GetAllUser")]
-        [CustomAuthorize("Read")]
         
-        public async Task<IActionResult> GetAllUser()
-        {
-            var users = await authManager.GetAllUsers();
-
-            return Ok(users);
-        }
-
 
         [HttpGet]
         [Route("GetUserWithRoles")]
         [CustomAuthorize("Read")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = ("Administrator"))]
         public async Task<IActionResult> GetUserWithRoles()
         {
             var users = await authManager.GetAllUsersWithRoles();
-
             return Ok(users);
         }
 
 
-        [HttpGet]
-        [Route("GetusersAll")]
-        [CustomAuthorize("Read")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = ("Administrator"))]
-        public async Task<IActionResult> GetusersAll()
-        {
-            var users = await authManager.GetusersAll();
-
-            return Ok(users);
-        }
+        
 
     }
 

@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Domain
 {
@@ -11,11 +12,13 @@ namespace Server.Domain
         public string? MiddleName           { get; set; }
         public string  LastName             { get; set; }
         public string? image                { get; set; }
-        public int     TenantId             { get; set; }=1;
         public bool    isAdmin              { get; set; } = false;
         public bool    isEmployee           { get; set; } = false;
         public string? defaultPassword      { get; set; }
         public int     EmployeeId           { get; set; }
+        public string  CompanyName          { get; set; }="";
+        public int     TenantId             { get; set; }=1;
+        public string CompanyDesignation    { get; set; } = "";
 
     }
 
